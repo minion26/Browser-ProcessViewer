@@ -22,14 +22,17 @@ Welcome to the Browser ProcessViewer repository! This Python script allows you t
 
 ## Usage
 
-   1. **List all processes with additional information**
-      - python process.py view
+   1. **Help command to see all the functionalities**
+      - py process.py help
 
-   2. **Suspend a process by providing its PID**
-      - python process.py suspend <PID>
+   2. **List all processes with additional information**
+      - py process.py view
 
-   3. **Stop a process by providing its PID**
-      - python process.py kill <PID>
+   3. **Suspend a process by providing its PID**
+      - py process.py suspend <PID>
 
-   4. **Start a process with a specified path and parameters**
-      - python process.py run <path> <parameters>
+   4. **Stop a process by providing its PID**
+      - py process.py kill <PID>
+
+   5. **Start a process with a specified path and parameters**
+      - py process.py run <path> <parameters>
