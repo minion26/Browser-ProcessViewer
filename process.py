@@ -20,7 +20,7 @@ def view_processes():
     print("Current processes:")
     for proc in ps.process_iter():
         try:
-            pinfo = proc.as_dict(attrs=['ppid','pid', 'name', 'exe'])
+            pinfo = proc.as_dict(attrs=['ppid', 'pid', 'name', 'exe'])
         except ps.NoSuchProcess:
             raise ValueError(f"The process with the PID {proc.pid} no longer exists.")
         else:
@@ -72,6 +72,17 @@ def resume_process(pid):
             print(f"The process with the PID {pid} is resumed.")
 
 
+def kill_proces(pid):
+    try:
+        proc = ps.Process(pid)
+    except ps.NoSuchProcess:
+        raise ValueError(f"The process with the PID {pid} no longer exists.")
+    else:
+        proc.kill()
+        # os.kill(pid, signal.SIGILL)
+        print(f"The process with the PID {pid} is killed.")
+
+
 if __name__ == "__main__":
     command = sys.argv[1]
     if command == "help":
@@ -88,3 +99,6 @@ if __name__ == "__main__":
     elif command == "resume":
         pid = int(sys.argv[2])
         resume_process(pid)
+    elif command == "kill":
+        pid = int(sys.argv[2])
+        kill_proces(pid)
