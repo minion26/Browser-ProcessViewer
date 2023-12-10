@@ -20,22 +20,56 @@ def view_processes():
     print("Current processes:")
     for proc in ps.process_iter():
         try:
-            pinfo = proc.as_dict(attrs=['pid', 'name', 'exe'])
+            pinfo = proc.as_dict(attrs=['ppid','pid', 'name', 'exe'])
         except ps.NoSuchProcess:
             raise ValueError(f"The process with the PID {proc.pid} no longer exists.")
         else:
             print(pinfo)
+
 
 def view_processes_by_name(name):
     for proc in ps.process_iter():
         try:
             pinfo = proc.as_dict(attrs=['ppid', 'pid', 'name', 'exe'])
         except ps.NoSuchProcess:
-            raise ValueError(f"Procesul cu PID-ul {proc.pid} nu mai exista.")
+            raise ValueError(f"The process with the PID {proc.pid} no longer exists.")
         else:
             if pinfo['name'] == name:
                 print(pinfo)
 
+
+def suspend_process(pid):
+    try:
+        proc = ps.Process(pid)
+    except ps.NoSuchProcess:
+        raise ValueError(f"The process with the PID {pid} no longer exists.")
+    else:
+        proc.suspend()
+        print(f"The process with the PID {pid} is suspended.")
+
+
+def check_if_suspended(pid):
+    try:
+        proc = ps.Process(pid)
+    except ps.NoSuchProcess:
+        raise ValueError(f"The process with the PID {pid} no longer exists.")
+    else:
+        if proc.status() == 'stopped':
+            return True
+
+        else:
+            return False
+
+
+def resume_process(pid):
+    try:
+        proc = ps.Process(pid)
+    except ps.NoSuchProcess:
+        raise ValueError(f"The process with the PID {pid} no longer exists.")
+    else:
+        if check_if_suspended(pid):
+            proc.resume()
+            print(f"The process with the PID {pid} is resumed.")
 
 
 if __name__ == "__main__":
@@ -47,3 +81,10 @@ if __name__ == "__main__":
     elif command == "view_by_name":
         name = sys.argv[2]
         view_processes_by_name(name)
+    elif command == "suspend":
+        pid = int(sys.argv[2])
+        suspend_process(pid)
+        check_if_suspended(pid)
+    elif command == "resume":
+        pid = int(sys.argv[2])
+        resume_process(pid)
