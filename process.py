@@ -26,12 +26,24 @@ def view_processes():
         else:
             print(pinfo)
 
+def view_processes_by_name(name):
+    for proc in ps.process_iter():
+        try:
+            pinfo = proc.as_dict(attrs=['ppid', 'pid', 'name', 'exe'])
+        except ps.NoSuchProcess:
+            raise ValueError(f"Procesul cu PID-ul {proc.pid} nu mai exista.")
+        else:
+            if pinfo['name'] == name:
+                print(pinfo)
+
+
 
 if __name__ == "__main__":
-    print("Welcome to the process manager!")
-    print("Type 'help' to see the available commands.")
     command = sys.argv[1]
     if command == "help":
         my_help()
     elif command == "view":
         view_processes()
+    elif command == "view_by_name":
+        name = sys.argv[2]
+        view_processes_by_name(name)
