@@ -5,16 +5,19 @@ import psutil as ps
 import os
 import subprocess as sp
 import matplotlib.pyplot as plt
+import argparse
 
 
 def my_help():
     print("Available commands:")
-    print("help - displays this list of commands")
-    print("view - displays the current processes")
+    print("help, -h - displays this list of commands")
+    print("view, -v - displays the current processes")
+    print("view_by_name <NAME> - displays the processes with the specified NAME")
     print("kill <PID> - kills the process with the PID ID")
     print("run <PATH> <PARAMS>- runs the process at the specified PATH with the specified PARAMS")
     print("suspend <PID> - suspends the process with the PID ID")
     print("resume <PID> - resumes the process with the PID ID")
+    print("info, -i - displays the CPU and memory usage")
 
 
 def view_processes():
@@ -139,24 +142,23 @@ def info():
 
 if __name__ == "__main__":
     command = sys.argv[1]
-    if command == "help":
+    if (command == "help" or command == "-h") and len(sys.argv) == 2:  # 0 - process.py, 1 - command
         my_help()
-    elif command == "view":
+    elif (command == "view" or command == "-v") and len(sys.argv) == 2:
         view_processes()
-    elif command == "view_by_name":
+    elif command == "view_by_name" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - name
         name = sys.argv[2]
         view_processes_by_name(name)
-    elif command == "suspend":
+    elif command == "suspend" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - pid
         pid = int(sys.argv[2])
         suspend_process(pid)
-        check_if_suspended(pid)
-    elif command == "resume":
+    elif command == "resume" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - pid
         pid = int(sys.argv[2])
         resume_process(pid)
-    elif command == "kill":
+    elif command == "kill" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - pid
         pid = int(sys.argv[2])
         kill_proces(pid)
-    elif command == "run":
+    elif command == "run" and len(sys.argv) >= 3:  # 0 - process.py, 1 - command, 2 - path, 3 - params
         path = sys.argv[2]
         # if params is empty, it will be None
         if len(sys.argv) == 3:
@@ -164,7 +166,7 @@ if __name__ == "__main__":
         else:
             params = sys.argv[3]
         start_proces(path, params)
-    elif command == "info":
+    elif (command == "info" or command == "-i") and len(sys.argv) == 2:  # 0 - process.py, 1 - command
         info()
     else:
-        print("Invalid command. Type 'help' for a list of commands.")
+        print("Invalid command or too many arguments. Type 'help' or '-h' for a list of commands.")
