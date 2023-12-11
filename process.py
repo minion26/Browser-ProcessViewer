@@ -4,6 +4,7 @@ import pathlib
 import psutil as ps
 import os
 import subprocess as sp
+import matplotlib.pyplot as plt
 
 
 def my_help():
@@ -103,6 +104,38 @@ def start_proces(path, params=None):
         return proc.pid
 
 
+def info():
+    # get the cpu usage
+    cpu_usage = ps.cpu_percent(5)
+    # get the memory usage
+    memory_usage = ps.virtual_memory().percent
+
+    print("CPU usage: ", cpu_usage)
+    print("Memory usage: ", memory_usage)
+
+    # PLOT CPU
+    # make a pie chart
+    labels = 'Used', 'Free'
+    sizes = [cpu_usage, 100 - cpu_usage]
+    explode = (0, 0.1)
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=False, startangle=90)
+    ax1.axis('equal')
+    plt.title("CPU Usage")
+    plt.show()
+
+    # PLOT MEMORY
+    sizes = [memory_usage, 100 - memory_usage]
+    explode = (0, 0.1)
+    fig2, ax2 = plt.subplots()
+    ax2.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+            shadow=False, startangle=90)
+    ax2.axis('equal')
+    plt.title("Memory Usage")
+    plt.show()
+
+
 if __name__ == "__main__":
     command = sys.argv[1]
     if command == "help":
@@ -130,3 +163,5 @@ if __name__ == "__main__":
         else:
             params = sys.argv[3]
         start_proces(path, params)
+    elif command == "info":
+        info()
