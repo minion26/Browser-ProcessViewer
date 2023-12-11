@@ -35,7 +35,8 @@ def view_processes_by_name(name):
         except ps.NoSuchProcess:
             raise ValueError(f"The process with the PID {proc.pid} no longer exists.")
         else:
-            if pinfo['name'] == name:
+            name2 = name.capitalize()
+            if pinfo['name'] == name or pinfo['name'] == name2:
                 print(pinfo)
 
 
@@ -106,7 +107,7 @@ def start_proces(path, params=None):
 
 def info():
     # get the cpu usage
-    cpu_usage = ps.cpu_percent(5)
+    cpu_usage = ps.cpu_percent()
     # get the memory usage
     memory_usage = ps.virtual_memory().percent
 
@@ -165,3 +166,5 @@ if __name__ == "__main__":
         start_proces(path, params)
     elif command == "info":
         info()
+    else:
+        print("Invalid command. Type 'help' for a list of commands.")
