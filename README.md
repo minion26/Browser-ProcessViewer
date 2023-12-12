@@ -9,7 +9,7 @@ Welcome to the Browser ProcessViewer repository! This Python script allows you t
 ## Features
 
 1. **View Current Processes**
-   - Display a list of currently running processes with details such as PID, Name, and Path.
+   - Display a list of currently running processes with details such as PPID, PID, Name, and Path.
 
 2. **Suspend/Resume Processes**
    - Suspend or resume a specific process by providing its PID.
@@ -22,17 +22,29 @@ Welcome to the Browser ProcessViewer repository! This Python script allows you t
 
 ## Usage
 
-   1. **Help command to see all the functionalities**
-      - py process.py help
-
-   2. **List all processes with additional information**
+   1. **List all processes with additional information**
       - py process.py view
 
-   3. **Suspend a process by providing its PID**
+   2. **Suspend a process by providing its PID**
       - py process.py suspend <PID>
+
+   3. **Resume a process by providing its PID**
+      - py process.py resume <PID>
 
    4. **Stop a process by providing its PID**
       - py process.py kill <PID>
 
    5. **Start a process with a specified path and parameters**
       - py process.py run <path> <parameters>
+
+   6. **Get the information about CPU usage and memory consumption**
+      - py process.py info
+
+## Aditional
+
+   1. **Help command to see all the functionalities**
+      - py process.py help
+
+   2. **Get the information (PPID, PID, Name, Path) about a specific process by providing its name**
+      - py process.py view_by_name <name>
+
