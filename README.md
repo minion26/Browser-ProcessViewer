@@ -2,11 +2,11 @@
 
 ![Badge](https://img.shields.io/badge/Difficulty-B-<YELLOW>)
 
-## Overview
+## Overview 🌐
 
 Welcome to the Browser ProcessViewer repository! This Python script allows you to perform various operations on processes, offering a set of powerful features to interact with and manage processes on your machine. Whether you're a developer, system administrator, or just someone who loves exploring the depths of their system, Browser ProcessViewer has you covered.
 
-## Features
+## Features 🚀 
 
 1. **View Current Processes**
    - Display a list of currently running processes with details such as PPID, PID, Name, and Path.
@@ -20,7 +20,7 @@ Welcome to the Browser ProcessViewer repository! This Python script allows you t
 4. **Process Information**
    - Retrieve information about running processes, including CPU usage and memory consumption.
 
-## Usage
+## Usage ⚙️
 
    1. **List all processes with additional information**
       - py process.py view
@@ -40,7 +40,7 @@ Welcome to the Browser ProcessViewer repository! This Python script allows you t
    6. **Get the information about CPU usage and memory consumption**
       - py process.py info
 
-## Aditional
+## Aditional ℹ️ 
 
    1. **Help command to see all the functionalities**
       - py process.py help
