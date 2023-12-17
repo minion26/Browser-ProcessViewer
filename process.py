@@ -6,8 +6,10 @@ import os
 import subprocess as sp
 import matplotlib.pyplot as plt
 import argparse
+import re
 
 
+# TODO: use callback functions
 def my_help():
     print("Available commands:")
     print("help, -h - displays this list of commands")
@@ -22,7 +24,7 @@ def my_help():
 
 
 def view_processes():
-    print("Current processes:")
+    print("Current processes...")
     my_list = []
     for proc in ps.process_iter():
         try:
@@ -32,7 +34,7 @@ def view_processes():
         else:
             my_list.append(pinfo)
 
-    # o lista cu cate 10 elemente din my_list
+    # lista cu cate 10 elemente din my_list
     page = [my_list[i:i + 10] for i in range(0, len(my_list), 10)]
     return page
 
@@ -40,29 +42,82 @@ def view_processes():
 def listare(page_start):
     page = view_processes()
     nr_pages = len(page)
+    if page_start >= nr_pages:
+        print("No more pages.")
+        return
     print(f"Page {page_start + 1} of {nr_pages}")
     print("PID\t\tPPID\t\tName\t\tPath")
-    for i in range(0, 10):
+    elements = len(page[page_start])
+    for i in range(0, elements):
         print(page[page_start][i]['pid'], "\t\t", page[page_start][i]['ppid'], "\t\t", page[page_start][i]['name'],
               "\t\t", page[page_start][i]['exe'])
 
 
 def view_processes_by_name(name):
+    print("Current processes with the name provided...")
+    #my_list = []
+    switch = False
     for proc in ps.process_iter():
         try:
             pinfo = proc.as_dict(attrs=['ppid', 'pid', 'name', 'exe'])
         except ps.NoSuchProcess:
             raise ValueError(f"The process with the PID {proc.pid} no longer exists.")
         else:
-            name2 = name.capitalize()
-            if pinfo['name'] == name or pinfo['name'] == name2:
+
+            # regex : ^[A-Z][a-z]*$\.exe - incepe cu litera mare, urmat de 0 sau mai multe litere mici si se termina cu .exe
+            # if re.findall(r'^[A-Z][a-z]*\.exe$', pinfo['name']):
+            #     print(pinfo)
+
+            if name in pinfo['name'].lower():
                 print(pinfo)
+                switch = True
+                # my_list.append(pinfo)
+    if not switch:
+        print("Nothing found.")
+
+
+
+    # return [my_list[i:i + 10] for i in range(0, len(my_list), 10)]
+
+
+# def listare_view_by_name(page_start, name):
+#     my_list = view_processes_by_name(name)
+#     nr_pages = len(my_list)
+#     if page_start >= nr_pages:
+#         print("No more pages.")
+#         return
+#     print(f"Page {page_start + 1} of {nr_pages}")
+#     print("PID\t\tPPID\t\tName\t\tPath")
+#     elements = len(my_list[page_start])
+#     for i in range(0, elements):
+#         print(my_list[page_start][i]['pid'], "\t\t", my_list[page_start][i]['ppid'], "\t\t",
+#               my_list[page_start][i]['name'],
+#               "\t\t", my_list[page_start][i]['exe'])
+
+
+# function with callback
+# def listare_callback(page_start, callback):
+#     # what if i want to call a function that has parameters?
+#     # callback(page_start, name)
+#     my_list = callback()
+#     nr_pages = len(my_list)
+#     if page_start >= nr_pages:
+#         print("No more pages.")
+#         return
+#     print(f"Page {page_start + 1} of {nr_pages}")
+#     print("PID\t\tPPID\t\tName\t\tPath")
+#     elements = len(my_list[page_start])
+#     for i in range(0, elements):
+#         print(my_list[page_start][i]['pid'], "\t\t", my_list[page_start][i]['ppid'], "\t\t", my_list[page_start][i]['name'],
+#               "\t\t", my_list[page_start][i]['exe'])
 
 
 def suspend_process(pid):
     try:
         proc = ps.Process(pid)
     except ps.NoSuchProcess:
+        raise ValueError(f"The process with the PID {pid} no longer exists.")
+    except ProcessLookupError:
         raise ValueError(f"The process with the PID {pid} no longer exists.")
     else:
         proc.suspend()
@@ -126,7 +181,7 @@ def start_proces(path, params=None):
             if params is not None:
                 command.extend(params.split())
             command = " ".join(command)
-            print(command)
+            # print(command)
 
             proc = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, stdin=sp.PIPE)
         elif platform.system() == 'Linux':
@@ -135,7 +190,7 @@ def start_proces(path, params=None):
             if params is not None:
                 command.extend(params.split())
             command = " ".join(command)
-            print(command)
+            # print(command)
 
             proc = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, stdin=sp.PIPE)
 
@@ -190,6 +245,7 @@ if __name__ == "__main__":
             print("Type 'next' to see the next page and 'exit' to exit.")
             while True:
                 listare(start_page)
+                # listare_callback(start_page, view_processes)
                 command = input("Enter command for viewing processes: ")
                 if command == "next":
                     start_page += 1
@@ -198,6 +254,15 @@ if __name__ == "__main__":
         elif command == "view_by_name":
             name = input("Enter name: ")
             view_processes_by_name(name)
+            # print("Type 'next' to see the next page and 'exit' to exit.")
+            # while True:
+            #     listare_view_by_name(start_page, name)
+            #     # listare_callback(start_page, view_processes_by_name(name))
+            #     command = input("Enter command for viewing processes: ")
+            #     if command == "next":
+            #         start_page += 1
+            #     elif command == "exit":
+            #         break
         elif command == "suspend":
             pid = int(input("Enter PID: "))
             suspend_process(pid)
