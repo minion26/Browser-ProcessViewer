@@ -148,7 +148,7 @@ def start_proces(path, params=None):
 
 def info():
     # get the cpu usage
-    cpu_usage = ps.cpu_percent()
+    cpu_usage = ps.cpu_percent(10)
     # get the memory usage
     memory_usage = ps.virtual_memory().percent
 
