@@ -18,6 +18,7 @@ def my_help():
     print("suspend <PID> - suspends the process with the PID ID")
     print("resume <PID> - resumes the process with the PID ID")
     print("info, -i - displays the CPU and memory usage")
+    print("exit - exits the program")
 
 
 def view_processes():
@@ -90,16 +91,38 @@ def kill_proces(pid):
 
 def start_proces(path, params=None):
     # start a process with the given path and params
-    try:
-        command = [path]
-        if params is not None:
-            command.extend(params.split())
+    # try:
+    #     command = [path]
+    #     if params is not None:
+    #         command.extend(params.split())
+    #
+    #     if platform.system() == 'Windows':
+    #         # On Windows, use CREATE_NEW_PROCESS_GROUP to detach the process
+    #          proc = sp.Popen(command, creationflags=sp.CREATE_NEW_PROCESS_GROUP)
+    #         # proc = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, stdin=sp.PIPE)
+    #     else:
+    #         proc = sp.Popen(command, preexec_fn=os.setpgrp)  # On Unix-like systems
+    #         # proc = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
 
+    try:
         if platform.system() == 'Windows':
-            # On Windows, use CREATE_NEW_PROCESS_GROUP to detach the process
-            proc = sp.Popen(command, creationflags=sp.CREATE_NEW_PROCESS_GROUP)
-        else:
-            proc = sp.Popen(command, preexec_fn=os.setpgrp)  # On Unix-like systems
+            cmd = "start cmd /k"
+            command = [cmd, path]
+            if params is not None:
+                command.extend(params.split())
+            command = " ".join(command)
+            print(command)
+
+            proc = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, stdin=sp.PIPE)
+        elif platform.system() == 'Linux':
+            cmd = "gnome-terminal -e"
+            command = [cmd, path]
+            if params is not None:
+                command.extend(params.split())
+            command = " ".join(command)
+            print(command)
+
+            proc = sp.Popen(command, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, stdin=sp.PIPE)
 
     except FileNotFoundError:
         raise ValueError(f"Executable {path} not found.")
@@ -141,32 +164,33 @@ def info():
 
 
 if __name__ == "__main__":
-    command = sys.argv[1]
-    if (command == "help" or command == "-h") and len(sys.argv) == 2:  # 0 - process.py, 1 - command
-        my_help()
-    elif (command == "view" or command == "-v") and len(sys.argv) == 2:
-        view_processes()
-    elif command == "view_by_name" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - name
-        name = sys.argv[2]
-        view_processes_by_name(name)
-    elif command == "suspend" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - pid
-        pid = int(sys.argv[2])
-        suspend_process(pid)
-    elif command == "resume" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - pid
-        pid = int(sys.argv[2])
-        resume_process(pid)
-    elif command == "kill" and len(sys.argv) == 3:  # 0 - process.py, 1 - command, 2 - pid
-        pid = int(sys.argv[2])
-        kill_proces(pid)
-    elif command == "run" and len(sys.argv) >= 3:  # 0 - process.py, 1 - command, 2 - path, 3 - params
-        path = sys.argv[2]
-        # if params is empty, it will be None
-        if len(sys.argv) == 3:
-            params = None
+    # command = sys.argv[1]
+    # if command == "start":
+    while True:
+        command = input("Enter command: ")
+        if command == "help" or command == "-h":
+            my_help()
+        elif command == "view" or command == "-v":
+            view_processes()
+        elif command == "view_by_name":
+            name = input("Enter name: ")
+            view_processes_by_name(name)
+        elif command == "suspend":
+            pid = int(input("Enter PID: "))
+            suspend_process(pid)
+        elif command == "resume":
+            pid = int(input("Enter PID: "))
+            resume_process(pid)
+        elif command == "kill":
+            pid = int(input("Enter PID: "))
+            kill_proces(pid)
+        elif command == "run":
+            path = input("Enter path: ")
+            params = input("Enter params: ")
+            start_proces(path, params)
+        elif command == "info" or command == "-i":
+            info()
+        elif command == "exit":
+            break
         else:
-            params = sys.argv[3]
-        start_proces(path, params)
-    elif (command == "info" or command == "-i") and len(sys.argv) == 2:  # 0 - process.py, 1 - command
-        info()
-    else:
-        print("Invalid command or too many arguments. Type 'help' or '-h' for a list of commands.")
+            print("Invalid command. Type 'help' or '-h' for a list of commands.")
