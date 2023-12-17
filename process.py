@@ -23,13 +23,28 @@ def my_help():
 
 def view_processes():
     print("Current processes:")
+    my_list = []
     for proc in ps.process_iter():
         try:
             pinfo = proc.as_dict(attrs=['ppid', 'pid', 'name', 'exe'])
         except ps.NoSuchProcess:
             raise ValueError(f"The process with the PID {proc.pid} no longer exists.")
         else:
-            print(pinfo)
+            my_list.append(pinfo)
+
+    # o lista cu cate 10 elemente din my_list
+    page = [my_list[i:i + 10] for i in range(0, len(my_list), 10)]
+    return page
+
+
+def listare(page_start):
+    page = view_processes()
+    nr_pages = len(page)
+    print(f"Page {page_start + 1} of {nr_pages}")
+    print("PID\t\tPPID\t\tName\t\tPath")
+    for i in range(0, 10):
+        print(page[page_start][i]['pid'], "\t\t", page[page_start][i]['ppid'], "\t\t", page[page_start][i]['name'],
+              "\t\t", page[page_start][i]['exe'])
 
 
 def view_processes_by_name(name):
@@ -166,12 +181,20 @@ def info():
 if __name__ == "__main__":
     # command = sys.argv[1]
     # if command == "start":
+    start_page = 0
     while True:
         command = input("Enter command: ")
         if command == "help" or command == "-h":
             my_help()
         elif command == "view" or command == "-v":
-            view_processes()
+            print("Type 'next' to see the next page and 'exit' to exit.")
+            while True:
+                listare(start_page)
+                command = input("Enter command for viewing processes: ")
+                if command == "next":
+                    start_page += 1
+                elif command == "exit":
+                    break
         elif command == "view_by_name":
             name = input("Enter name: ")
             view_processes_by_name(name)
