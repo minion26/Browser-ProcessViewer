@@ -9,7 +9,6 @@ import argparse
 import re
 
 
-# TODO: use callback functions
 def my_help():
     print("Available commands:")
     print("help, -h - displays this list of commands")
@@ -55,7 +54,7 @@ def listare(page_start):
 
 def view_processes_by_name(name):
     print("Current processes with the name provided...")
-    #my_list = []
+    # my_list = []
     switch = False
     for proc in ps.process_iter():
         try:
@@ -74,42 +73,6 @@ def view_processes_by_name(name):
                 # my_list.append(pinfo)
     if not switch:
         print("Nothing found.")
-
-
-
-    # return [my_list[i:i + 10] for i in range(0, len(my_list), 10)]
-
-
-# def listare_view_by_name(page_start, name):
-#     my_list = view_processes_by_name(name)
-#     nr_pages = len(my_list)
-#     if page_start >= nr_pages:
-#         print("No more pages.")
-#         return
-#     print(f"Page {page_start + 1} of {nr_pages}")
-#     print("PID\t\tPPID\t\tName\t\tPath")
-#     elements = len(my_list[page_start])
-#     for i in range(0, elements):
-#         print(my_list[page_start][i]['pid'], "\t\t", my_list[page_start][i]['ppid'], "\t\t",
-#               my_list[page_start][i]['name'],
-#               "\t\t", my_list[page_start][i]['exe'])
-
-
-# function with callback
-# def listare_callback(page_start, callback):
-#     # what if i want to call a function that has parameters?
-#     # callback(page_start, name)
-#     my_list = callback()
-#     nr_pages = len(my_list)
-#     if page_start >= nr_pages:
-#         print("No more pages.")
-#         return
-#     print(f"Page {page_start + 1} of {nr_pages}")
-#     print("PID\t\tPPID\t\tName\t\tPath")
-#     elements = len(my_list[page_start])
-#     for i in range(0, elements):
-#         print(my_list[page_start][i]['pid'], "\t\t", my_list[page_start][i]['ppid'], "\t\t", my_list[page_start][i]['name'],
-#               "\t\t", my_list[page_start][i]['exe'])
 
 
 def suspend_process(pid):
@@ -245,7 +208,6 @@ if __name__ == "__main__":
             print("Type 'next' to see the next page and 'exit' to exit.")
             while True:
                 listare(start_page)
-                # listare_callback(start_page, view_processes)
                 command = input("Enter command for viewing processes: ")
                 if command == "next":
                     start_page += 1
@@ -254,15 +216,6 @@ if __name__ == "__main__":
         elif command == "view_by_name":
             name = input("Enter name: ")
             view_processes_by_name(name)
-            # print("Type 'next' to see the next page and 'exit' to exit.")
-            # while True:
-            #     listare_view_by_name(start_page, name)
-            #     # listare_callback(start_page, view_processes_by_name(name))
-            #     command = input("Enter command for viewing processes: ")
-            #     if command == "next":
-            #         start_page += 1
-            #     elif command == "exit":
-            #         break
         elif command == "suspend":
             pid = int(input("Enter PID: "))
             suspend_process(pid)
